@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!-- saved from url=http://ianreah.com/2013/02/28/Real-time-analysis-of-streaming-audio-data-with-Web-Audio-API.html -->
+<html><head>
+
+    <title>Visualizer TEST</title>
+
+    <!--Jquery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    <script type="text/javascript" src="inc/jquery-1.11.3.js"> </script>
+
+    <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
+
+   <link rel="stylesheet" href="visualizer_styles.css" type="text/css" media="screen" title="no title" />
+
+    <!--Bootstrap files -->
+    <script src="inc/bootstrap.min.js"></script> 
+    <link href="inc/bootstrap.min.css" rel="stylesheet">
+   
+</head>
+<body>
+
+<span id="counter_debug">1</span>
+
+<div id="soundcloud_attribution_container">
+    <div id="soundcloud_attribution">
+        <span id="soundcloud_title_display">song</span>
+        <br>
+        Uploaded by: 
+        <span id="soundcloud_creator_display">
+            creator
+        </span>
+    </div>
+    <a href="http://www.soundcloud.com/">
+        <img src="inc/powered_by_soundcloud.png">
+    </a>
+</div>
+
+<div class="centered_div" id="visualizer_space">
+
+    <img src="https://danthemantrivia.files.wordpress.com/2010/09/rubiks-cube.jpg" id="image">
+
+    <div class="rectangle" id="rectangle1"></div>
+    <div class="rectangle" id="rectangle2"></div>
+    <div class="rectangle" id="rectangle3"></div>
+    <div class="rectangle" id="rectangle4"></div>
+    <div class="rectangle" id="rectangle5"></div>
+    <div class="rectangle" id="rectangle6"></div>
+    <div class="rectangle" id="rectangle7"></div>
+    <div class="rectangle" id="rectangle8"></div>
+
+    <div class="rectangle" id="rectangle9"></div>
+
+</div>
+
+<br>
+
+<div class="centered_div" id="audio_container">
+    <audio id="player" class="hideIfNoApi" controls="controls" src="" crossorigin="anonymous"> </audio>
+</div>
+
+<br>
+
+<div class="centered_div" id="search_form_div">
+    <form id="search_form">
+        <input class="form-control input-lg" id="search_input" name="search_input" type="search" placeholder="song, artist" size="30">
+        <input class="btn btn-default" id="search_form_submit_button" type="submit" value="Search">
+    </form>
+    <br>
+    <div id="search_results_space">
+        <ol class="lead" id="search_results_list">
+        </ol>
+    </div>
+</div>
+
+<br>
+
+<div id="example">
+
+    <div id="visualisation" class="hideIfNoApi"> 
+        <div style="left: 0%; height: 0px;"></div>
+        <div style="left: 3.125%; height: 0px;"></div>
+        <div style="left: 6.25%; height: 0px;"></div>
+        <div style="left: 9.375%; height: 0px;"></div>
+        <div style="left: 12.5%; height: 0px;"></div>
+        <div style="left: 15.625%; height: 0px;"></div>
+        <div style="left: 18.75%; height: 0px;"></div>
+        <div style="left: 21.875%; height: 0px;"></div>
+        <div style="left: 25%; height: 0px;"></div>
+        <div style="left: 28.125%; height: 0px;"></div>
+        <div style="left: 31.25%; height: 0px;"></div>
+        <div style="left: 34.375%; height: 0px;"></div>
+        <div style="left: 37.5%; height: 0px;"></div>
+        <div style="left: 40.625%; height: 0px;"></div>
+        <div style="left: 43.75%; height: 0px;"></div>
+        <div style="left: 46.875%; height: 0px;"></div>
+        <div style="left: 50%; height: 0px;"></div>
+        <div style="left: 53.125%; height: 0px;"></div>
+        <div style="left: 56.25%; height: 0px;"></div>
+        <div style="left: 59.375%; height: 0px;"></div>
+        <div style="left: 62.5%; height: 0px;"></div>
+        <div style="left: 65.625%; height: 0px;"></div>
+        <div style="left: 68.75%; height: 0px;"></div>
+        <div style="left: 71.875%; height: 0px;"></div>
+        <div style="left: 75%; height: 0px;"></div>
+        <div style="left: 78.125%; height: 0px;"></div>
+        <div style="left: 81.25%; height: 0px;"></div>
+        <div style="left: 84.375%; height: 0px;"></div>
+        <div style="left: 87.5%; height: 0px;"></div>
+        <div style="left: 90.625%; height: 0px;"></div>
+        <div style="left: 93.75%; height: 0px;"></div>
+        <div style="left: 96.875%; height: 0px;"></div>
+    </div>
+
+	<p class="showIfNoApi">Unable to run this Web Audio API example. <a href="http://caniuse.com/#feat=audio-api">Check browser support</a></p>
+	<img class="showIfNoApi" src="./Test_audio_files/post-2013-02-19-screenshot.png">
+</div>
+
+<script type="text/javascript" src="sound_cloud_visualizer.js"> </script>
+
+</div>
+
+</body>
+</html>
