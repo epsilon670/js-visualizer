@@ -30,8 +30,8 @@ var ms_per_beat = 500; //start ms_per_beat at 500 as default
 var msPerBeat_array = new Array();
 
 //TESTING
-var song = 'better at making time,';
-var artist = 'de lux';
+var song = 'summer is over (rework)';
+var artist = 'Anoraak';
 global_query = song+"+"+artist;
 GetSpotifySongInfo(global_query);
 
@@ -374,118 +374,6 @@ player.onpause = function() {
     window.clearInterval(visualizer_interval); 
 };
 
-//*******BEGIN VISUALIZER FUNCTIONS********//
-
-function invertImageColors(){
-    current_webkit_filter_value = $("#image").css("-webkit-filter");
-    if(current_webkit_filter_value == "invert(0)"){
-        $("#image").css("-webkit-filter", "invert(100%)")
-    }
-    else{
-        $("#image").css("-webkit-filter", "invert(0%)")
-    }
-}
-
-function changeRectangleColor(rectangle_number){
-    var rectangle_display_property = $("#rectangle"+rectangle_number).css('visibility');
-    //console.log(rectangle_display_property);
-    if(rectangle_display_property == "hidden"){
-        $("#rectangle"+rectangle_number).css('visibility', 'visible');
-    }
-    else{
-        $("#rectangle"+rectangle_number).css('visibility', 'hidden');
-    }
-}
-
-function rectangleAnimationChange(){
-    randomnumber = Math.floor(Math.random()*10)+1;
-    switch(randomnumber) {
-        case 1:
-            changeRectangleColor(1);
-            changeRectangleColor(2);
-            changeRectangleColor(3);
-            changeRectangleColor(4);
-            break;
-        case 2:
-            changeRectangleColor(1);
-            changeRectangleColor(2);
-            break;
-        case 3:
-            changeRectangleColor(1);
-            break;
-        case 4:
-            changeRectangleColor(3);
-            changeRectangleColor(4);
-            break;
-        case 5:
-            changeRectangleColor(3);
-            break;
-        case 6:
-            changeRectangleColor(5);
-            changeRectangleColor(6);
-            changeRectangleColor(7);
-            changeRectangleColor(8);
-            break;
-        case 7:
-            changeRectangleColor(5);
-            changeRectangleColor(6);
-            break;
-        case 8:
-            changeRectangleColor(5);
-            break;
-        case 9:
-            changeRectangleColor(7);
-            changeRectangleColor(8);
-            break;
-        case 10:
-            changeRectangleColor(7);
-            break;
-    }
-}
-function rectangleAnimationChange2(){
-    changeRectangleColor(9);
-}
-function clearRectangles(){
-    $(".rectangle").css('visibility', 'hidden');
-}
-
-/*********Image Manipulation*******/
-var image_url1 = "https://danthemantrivia.files.wordpress.com/2010/09/rubiks-cube.jpg";
-var image_url2 = "https://c2.staticflickr.com/8/7410/11983237056_36250c52d3_z.jpg";
-var image_url3 = "http://cdn.shopify.com/s/files/1/0395/6813/products/nu-disco-funk_studiopistol_1024x1024.jpg?v=1434905657";
-var image_url4 = "http://media.giphy.com/media/lRDc8y67mapVu/giphy.gif";
-var image_url5 = "http://40.media.tumblr.com/15b5f64882b81695d2baaa186cc0f965/tumblr_nn94zjBggC1soumhdo1_500.jpg";
-var image_counter = 1;
-
-function changeImage(){
-    image_counter++;
-    var url_to_use;
-    switch(image_counter) {
-        case 2:
-            url_to_use = image_url2;
-            break;
-        case 3:
-            url_to_use = image_url3;
-            break;
-        case 4:
-            url_to_use = image_url4;
-            break;
-        case 5:
-            url_to_use = image_url5;
-            break;
-        default:
-            url_to_use = image_url1;
-            image_counter = 1;
-            break;
-    }
-    $("#image").attr("src", url_to_use);
-}
-/*******End Image Manipulation*******/
-
-
-//*******END VISUALIZER FUNCTIONS********//
-
-
 var sixteenth_counter = 1; //16th note counter
 var eighth_counter = 1; //eight note counter
 var quarter_counter = 1; //quarter note counter
@@ -515,6 +403,22 @@ function counterManager(counter_value, number_of_times_per_measure){
         counter_value = counter_value + 0.25;
     }
     return counter_value;
+}
+
+/*setCounters function
+**Adds appropriate value to all of the counters when called in order to run them forward
+**To be used in visualizerSwitch() function
+*/
+function SetCounters(){
+    infinite_counter = infinite_counter+0.25; //starts at 1 and outputs increments of 0.25 everytime this function is called
+    sixteenth_counter = counterManager(sixteenth_counter, 16); //outputs a 1 sixteen times per measure
+    eighth_counter = counterManager(eighth_counter, 8); //outputs 1-1.25 eight times per measure
+    quarter_counter = counterManager(quarter_counter, 4); //outputs 1-1.75 four times per measure
+    half_counter = counterManager(half_counter, 2); //outputs 1-2.75 twice times per measure
+    whole_counter = counterManager(whole_counter, 1); //outputs 1-4.75 once per measure
+    two_counter = counterManager(two_counter, 0.5); //outputs 1-8.75 over two measures then resets
+    four_counter = counterManager(four_counter, 0.25); //outputs 1-16.75 over four measures then resets
+    eight_counter = counterManager(eight_counter, 0.125); //outputs 1-32.75 over eight measures then resets
 }
 
 /*doInTime function
@@ -577,6 +481,14 @@ function doInTime(number_of_times_per_measure, thing_to_do, start, end, closing_
     }
 }
 
+/*converts time to beats based on the units specified
+**E.g., input could be 4s, 4e, 4b, 4m, or just 4
+**4s = 4 sixteenth notes = 1 beat
+**4e = 4 eight notes = 2 beats
+**4b = 4 beats
+**4m = 4 measures or 16 beats
+**4 by itself with no unites defaults to 4 beats
+*/
 function convertTimeToBeats(input){
     var beat;
     var regexp = /[0-9]$/;
@@ -613,9 +525,6 @@ function convertTimeToBeats(input){
     }
 }
 
-var test = convertTimeToBeats("3s");
-console.log("Test: "+test);
-
 /*alternateInTime function (experimental as of 11/18)*/
 var alternate_counter = 1;
 function alternateInTime(){
@@ -625,27 +534,28 @@ function alternateInTime(){
             invertImageColors();
             break;
         default:
-            changeImage();
+            runThroughImages();
             alternate_counter = 1;
             break;
     }
 }
 
+//takes optional 3rd parameter which is passed to the "thing_to_do" function as its parameter
+function doOnceAtACertainBeat(time_to_do_thing, thing_to_do){
+  var beat = convertTimeToBeats(time_to_do_thing);
+  if(infinite_counter == beat){
+    thing_to_do(arguments[2]);
+  }
+}
+
 var visualizerSwitch = function visualizerSwitch(){
     
-    infinite_counter = infinite_counter+0.25; //starts at 1 and outputs increments of 0.25 everytime this function is called
-    sixteenth_counter = counterManager(sixteenth_counter, 16); //outputs a 1 sixteen times per measure
-    eighth_counter = counterManager(eighth_counter, 8); //outputs 1-1.25 eight times per measure
-    quarter_counter = counterManager(quarter_counter, 4); //outputs 1-1.75 four times per measure
-    half_counter = counterManager(half_counter, 2); //outputs 1-2.75 twice times per measure
-    whole_counter = counterManager(whole_counter, 1); //outputs 1-4.75 once per measure
-    two_counter = counterManager(two_counter, 0.5); //outputs 1-8.75 over two measures then resets
-    four_counter = counterManager(four_counter, 0.25); //outputs 1-16.75 over four measures then resets
-    eight_counter = counterManager(eight_counter, 0.125); //outputs 1-32.75 over eight measures then resets
+    SetCounters();
 
-    doInTime(0.5, changeImage, 1, "6m"); //every 2 measures
+    /*SAMPLE ANIMATIONS 11/23/15:
+    doInTime(0.5, runThroughImages, 1, "6m"); //every 2 measures
     doInTime(1, invertImageColors, 1, 21); //every measure
-    
+
     //experimental 11/19:
     //doInTime(1, alternateInTime); //every measure
 
@@ -654,10 +564,17 @@ var visualizerSwitch = function visualizerSwitch(){
 
     //run every 4 times every beat starting in the 17th measure and going until the end of the 32nd measure
     doInTime(16, rectangleAnimationChange2, 17, 33, clearRectangles);
+    */
+
+    summerIsOver(); //special programming for summerIsOver
 
     //display four count number on page
     if(Number.isInteger(whole_counter)){
         $("#counter_debug").html(whole_counter); 
+    }
+
+    if(Number.isInteger(infinite_counter)){
+      $("#infinite_counter_debug").html(infinite_counter);
     }
 }
 
@@ -669,7 +586,15 @@ function visualizer(){
     }
     console.log("MS per beat for visualizer is: "+ms_per_beat);
     //run visualizerSwitch function in time with the beat:
-    visualizer_interval = window.setInterval(visualizerSwitch, ms_per_beat/4);
+    /*TESTING 11/23/15*/if(global_query == "summer is over (rework)+Anoraak"){
+      //delay animation start by 1 beat
+      setTimeout(function() {
+        visualizer_interval = window.setInterval(visualizerSwitch, ms_per_beat/4);
+       }, ms_per_beat);
+    }
+    else{ //no delay:
+      visualizer_interval = window.setInterval(visualizerSwitch, ms_per_beat/4);
+    }
 }
 
 /************************END VISUALIZER STUFF*************************************/
