@@ -78,12 +78,13 @@ function clearRectangles(){
 function changeImage(image_url){
   $("#image").attr("src", image_url);
 }
-
+/*TEST IMAGES
 var image_url1 = "https://danthemantrivia.files.wordpress.com/2010/09/rubiks-cube.jpg";
 var image_url2 = "https://c2.staticflickr.com/8/7410/11983237056_36250c52d3_z.jpg";
 var image_url3 = "http://cdn.shopify.com/s/files/1/0395/6813/products/nu-disco-funk_studiopistol_1024x1024.jpg?v=1434905657";
 var image_url4 = "http://media.giphy.com/media/lRDc8y67mapVu/giphy.gif";
 var image_url5 = "http://40.media.tumblr.com/15b5f64882b81695d2baaa186cc0f965/tumblr_nn94zjBggC1soumhdo1_500.jpg";
+*/
 var image_counter = 1;
 
 function runThroughImages(){

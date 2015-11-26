@@ -28,6 +28,8 @@ var global_query;
 var search_fade_speed = 300;
 var ms_per_beat = 500; //start ms_per_beat at 500 as default
 var msPerBeat_array = new Array();
+var current_time = 0;
+var audio_duration = 0;
 
 //TESTING
 var song = 'summer is over (rework)';
@@ -395,7 +397,6 @@ function dummy(){} //dummy function to be called if we don't want to do anything
 **needs to be separate from doInTime function below because the "else" part of the statement needs to happen at any time (not just the closing)
 */
 function counterManager(counter_value, number_of_times_per_measure){
-    //thing_to_do();
     if(counter_value == ((4/number_of_times_per_measure-0.25)+1)) {
         counter_value = 1;
     }
@@ -421,24 +422,7 @@ function SetCounters(){
     eight_counter = counterManager(eight_counter, 0.125); //outputs 1-32.75 over eight measures then resets
 }
 
-/*doInTime function
-**accepts:
-**   REQUIRED: number of times per measure to do something 
-**   REQUIRED: a function to be done
-**   OPTIONAL: the beat number to START at (default is 1 or the beginning of song)
-**   OPTIONAL: the beat number to END at (default is beat #5,400 which is 3 hours at 2000 ms_per_beat (which is a SLOW tempo))
-**   OPTIONAL: function to be called once when ending (default is dummy() function)
-*/
-function doInTime(number_of_times_per_measure, thing_to_do, start, end, closing_function){
-    //set start_beat to be 1 if it was not passed
-    if (typeof start === 'undefined') {start_beat = 1;}
-    else{start_beat = convertTimeToBeats(start);}
-    //set end_beat to be 5,400 if it was not passed (~3 hours at slowest ms_per_beat)
-    if (typeof end === 'undefined') {end_beat = 5400;} 
-    else{end_beat = convertTimeToBeats(end);}
-    //set closing_function to be dummy if it was not passed
-    if (typeof closing_function === 'undefined') {closing_function = dummy();}
-
+function getAppropriateCounter(number_of_times_per_measure){
     //set the appropriate counter to watch based on number_of_times_per_measure
     switch(number_of_times_per_measure) {
         case 16:
@@ -469,6 +453,30 @@ function doInTime(number_of_times_per_measure, thing_to_do, start, end, closing_
             counter_value = 0;
             break;
     }
+    return counter_value;
+}
+
+/*doInTime function
+**accepts:
+**   REQUIRED: number of times per measure to do something 
+**   REQUIRED: a function to be done
+**   OPTIONAL: the beat number to START at (default is 1 or the beginning of song)
+**   OPTIONAL: the beat number to END at (default is beat #5,400 which is 3 hours at 2000 ms_per_beat (which is a SLOW tempo))
+**   OPTIONAL: function to be called once when ending (default is dummy() function)
+*/
+function doInTime(number_of_times_per_measure, thing_to_do, start, end, closing_function){
+    //set start_beat to be 1 if it was not passed
+    if (typeof start === 'undefined') {start_beat = 1;}
+    else{start_beat = convertTimeToBeats(start);}
+    //set end_beat to be 5,400 if it was not passed (~3 hours at slowest ms_per_beat)
+    if (typeof end === 'undefined') {end_beat = 5400;} 
+    else{end_beat = convertTimeToBeats(end);}
+    //set closing_function to be dummy if it was not passed
+    if (typeof closing_function === 'undefined') {closing_function = dummy();}
+
+    //set the appropriate counter to watch based on number_of_times_per_measure
+    counter_value = getAppropriateCounter(number_of_times_per_measure);
+
     if(counter_value == ((4/number_of_times_per_measure-0.25)+1)) {
         if(infinite_counter > start_beat && infinite_counter < end_beat-0.25){
             //if we have not yet exceeded the desired end_beat:
@@ -477,6 +485,30 @@ function doInTime(number_of_times_per_measure, thing_to_do, start, end, closing_
         else if(end_beat != 0 && infinite_counter == end_beat){
             //if the desired end_beat was passed AND we've hit it:
             closing_function();
+        }
+    }
+}
+
+
+/*assumes that the start_beat is the first beat we want to do the thing on
+**does it over subsequent intervals based on number_of_times_per_measure_value
+**accepts:
+**   REQUIRED: number of times per measure to do something 
+**   REQUIRED: a function to be done
+**   REQUIRED: the beat number to START at
+**   OPTIONAL: the beat number to END at (default is beat #5,400 which is 3 hours at 2000 ms_per_beat (which is a SLOW tempo))
+*/
+function doInTimeStartingOnBeat(number_of_times_per_measure, thing_to_do, start, end){
+    //set end_beat to be 5,400 if it was not passed (~3 hours at slowest ms_per_beat)
+    if (typeof end === 'undefined') {end_beat = 5400;} 
+    else{end_beat = convertTimeToBeats(end);}
+    var start_beat = convertTimeToBeats(start);
+    var beat_interval = 4/number_of_times_per_measure
+    if(infinite_counter >= start_beat && infinite_counter < end_beat-.25){
+        var difference = infinite_counter - start_beat;
+        var mod = difference % beat_interval;
+        if(mod == 0){
+            thing_to_do();
         }
     }
 }
@@ -525,19 +557,17 @@ function convertTimeToBeats(input){
     }
 }
 
-/*alternateInTime function (experimental as of 11/18)*/
-var alternate_counter = 1;
-function alternateInTime(){
-     alternate_counter++;
-     switch(alternate_counter) {
-        case 2:
-            invertImageColors();
-            break;
-        default:
-            runThroughImages();
-            alternate_counter = 1;
-            break;
-    }
+/*rounder() function
+**accepts a number and the number of decimals to round to
+**e.g., number is 55.324354 and num of decimals is 3
+**returns the rounded number.  e.g., 55.324
+*/
+function rounder(number, decimals_to_round){
+  var base_ten = Math.pow(10, decimals_to_round);
+  multiplied_number = number * base_ten;
+  rounded_number = Math.round(multiplied_number);
+  rounded_number = rounded_number/base_ten;
+  return rounded_number;
 }
 
 //takes optional 3rd parameter which is passed to the "thing_to_do" function as its parameter
@@ -552,30 +582,23 @@ var visualizerSwitch = function visualizerSwitch(){
     
     SetCounters();
 
-    /*SAMPLE ANIMATIONS 11/23/15:
-    doInTime(0.5, runThroughImages, 1, "6m"); //every 2 measures
-    doInTime(1, invertImageColors, 1, 21); //every measure
-
     //experimental 11/19:
     //doInTime(1, alternateInTime); //every measure
-
-    //run every 4 times every beat starting in the 1st measure and going until the end of the 16th measure
-    doInTime(16, rectangleAnimationChange, 1, 17, clearRectangles);
-
-    //run every 4 times every beat starting in the 17th measure and going until the end of the 32nd measure
-    doInTime(16, rectangleAnimationChange2, 17, 33, clearRectangles);
-    */
 
     summerIsOver(); //special programming for summerIsOver
 
     //display four count number on page
     if(Number.isInteger(whole_counter)){
-        $("#counter_debug").html(whole_counter); 
+        $("#counter_debug").html(whole_counter);
     }
 
     if(Number.isInteger(infinite_counter)){
       $("#infinite_counter_debug").html(infinite_counter);
     }
+
+    //TESTING 11/25
+    current_time = rounder(player.currentTime, 3);
+    $("#current_time").html(current_time+" / "+audio_duration);
 }
 
 
@@ -584,6 +607,7 @@ function visualizer(){
         //if the visualizer is already going, clear the interval and start over:
         window.clearInterval(visualizer_interval);
     }
+    audio_duration = rounder(player.duration, 3); //set audio length
     console.log("MS per beat for visualizer is: "+ms_per_beat);
     //run visualizerSwitch function in time with the beat:
     /*TESTING 11/23/15*/if(global_query == "summer is over (rework)+Anoraak"){

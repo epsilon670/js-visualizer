@@ -104,15 +104,9 @@
 	.cross_rectangle{
 		position:absolute;
 		visibility:visible;
-		width:100%;
+		width:0%;
 		height:5%;
 		background-color:black;
-	}
-	.cr_left{
-		left:-100%;
-	}
-	.cr_right{
-		left:100%;
 	}
 
 
