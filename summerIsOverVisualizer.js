@@ -77,9 +77,9 @@ function summerIsOver(){ //demo/testing 11/23/15.  https://soundcloud.com/anoraa
     doOnceAtACertainBeat(176, changeImage, image_url6);
     doOnceAtACertainBeat(192, changeImage, image_url7);
     doOnceAtACertainBeat(208, changeImage, image_url8);
-    doOnceAtACertainBeat(241, changeImage, image_url3);
-    doOnceAtACertainBeat(257, changeImage, image_url11);
-    doOnceAtACertainBeat(289, changeImage, image_url2);
+    doOnceAtACertainBeat(240, changeImage, image_url3);
+    doOnceAtACertainBeat(256, changeImage, image_url11);
+    doOnceAtACertainBeat(288, changeImage, image_url2);
 
     doInTime(16, alternateRectangleChanges);
     doInTimeStartingOnBeat(1, animateCrossRectangles, 50, 111);
