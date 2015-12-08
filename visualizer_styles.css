@@ -45,11 +45,17 @@
     position:relative; /*just so that visualizer_space is the containing block for absolutely positioned child elements*/
 }
 
-	#image{
+	.visual_image{
 		width:100%;
 	    height:100%;
 	    display: block;
+	    position:absolute;
 	    -webkit-filter:invert(0%); /*need this so the JS invert_change_color() function works initially*/
+	    z-index: -1;
+	}
+
+	#image{
+		z-index: 0; /*set this to be visible image to start*/	
 	}
 
 	.rectangle{

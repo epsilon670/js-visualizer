@@ -75,9 +75,39 @@ function clearRectangles(){
 
 /*********Image Manipulation*******/
 
-function changeImage(image_url){
-  $("#image").attr("src", image_url);
+function changeImageURL(image_url){
+    $("#image").attr("src", image_url);
 }
+
+//shuffleImage function
+//accepts the number of the image to be shown
+function changeImage(number_of_image_to_show){
+    $(".visual_image").css("z-index", -1); //hide all images
+    $("#image"+number_of_image_to_show).css("z-index", 0); //show desired image
+}
+
+/*loadImages function
+**accepts up to 30 image urls as arguments
+**adds those images to the page and gives each an id of the form "image_" 
+**where _ is a number signifying the order in which the image url was passed as a arg
+**TODO 12/7/15: Add ajax code so that images load asynchronously?
+*/
+function loadImages(){
+    var num_arguments;
+    var image_number;
+    if(arguments.length > 30){
+        //cap the number of images to load at 30
+        num_arguments = 30;
+    }
+    else{
+        num_arguments = arguments.length;
+    }
+    for (var i = 0; i < num_arguments; i++) {
+        image_number = i+2; //so that first image is #image2
+        $("#image").after("<img src='"+arguments[i]+"' class='visual_image' id='image"+image_number+"'>");
+    }
+}
+
 /*TEST IMAGES
 var image_url1 = "https://danthemantrivia.files.wordpress.com/2010/09/rubiks-cube.jpg";
 var image_url2 = "https://c2.staticflickr.com/8/7410/11983237056_36250c52d3_z.jpg";

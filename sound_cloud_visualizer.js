@@ -2,7 +2,6 @@
 /*TO DO 11/19/15:
 -Make the Soundcloud BPM calculation the default (spotify can be wrong sometimes)
     -BPM calc in general needs work - it's off for some songs
--Create cool visualization functions and add them for a given song.  Try to find problems/bugs in the process
 -loading icon for search AND soundcloud tempo fetching (see switch statement inside beatsPerMillisecondCallback function)
 -Either figure out how to use the frequency visualizations or hide them from the page
 */

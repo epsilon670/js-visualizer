@@ -59,6 +59,11 @@ var image_url10 = "http://2.bp.blogspot.com/_4ARUtqkw2pM/S7S8plWtqYI/AAAAAAAAAn8
 //gif of colorful hand giving peace sign and thumbs up
 var image_url11 = "http://static1.squarespace.com/static/54340e70e4b0ebdd5103c677/545d46f4e4b0263200d209c8/545d46f8e4b02ca19c76c924/1415399193202/f14aacae842b56fb0f3e5208eb9f4740.gif";
 
+//load images on the page as soon as page loads:
+$( document ).ready(function() {
+    loadImages(image_url2, image_url3, image_url4, image_url5, image_url6, image_url7, image_url8, image_url9, image_url10, image_url11);
+});
+
 
 function summerIsOver(){ //demo/testing 11/23/15.  https://soundcloud.com/anoraak/summer-is-over-rework-master
     
@@ -67,26 +72,21 @@ function summerIsOver(){ //demo/testing 11/23/15.  https://soundcloud.com/anoraa
     
     //doInTime(1, invertImageColors, 1, 21); //every measure
     
-    doOnceAtACertainBeat(49, changeImage, image_url2);
-    doOnceAtACertainBeat(81, changeImage, image_url10);
-    doOnceAtACertainBeat(113, changeImage, image_url11);
+    doOnceAtACertainBeat(49, changeImage, 2);
+    doOnceAtACertainBeat(81, changeImage, 10);
+    doOnceAtACertainBeat(113, changeImage, 11);
     //beat delay?
-    doOnceAtACertainBeat(128, changeImage, image_url5);
-    doOnceAtACertainBeat(144, changeImage, image_url4);
-    doOnceAtACertainBeat(160, changeImage, image_url9);
-    doOnceAtACertainBeat(176, changeImage, image_url6);
-    doOnceAtACertainBeat(192, changeImage, image_url7);
-    doOnceAtACertainBeat(208, changeImage, image_url8);
-    doOnceAtACertainBeat(240, changeImage, image_url3);
-    doOnceAtACertainBeat(256, changeImage, image_url11);
-    doOnceAtACertainBeat(288, changeImage, image_url2);
+    doOnceAtACertainBeat(129, changeImage, 5);
+    doOnceAtACertainBeat(145, changeImage, 4);
+    doOnceAtACertainBeat(161, changeImage, 9);
+    doOnceAtACertainBeat(177, changeImage, 6);
+    doOnceAtACertainBeat(193, changeImage, 7);
+    doOnceAtACertainBeat(209, changeImage, 8);
+    doOnceAtACertainBeat(241, changeImage, 3);
+    doOnceAtACertainBeat(257, changeImage, 11);
+    doOnceAtACertainBeat(289, changeImage, 2);
 
     doInTime(16, alternateRectangleChanges);
-    doInTimeStartingOnBeat(1, animateCrossRectangles, 50, 111);
+    doInTimeStartingOnBeat(1, animateCrossRectangles, 50, 81);
     
-    /*
-    doOnceAtACertainBeat(50, animateCrossRectangles);
-    doOnceAtACertainBeat(54, animateCrossRectangles);
-    doOnceAtACertainBeat(58, animateCrossRectangles);
-    */
 }
