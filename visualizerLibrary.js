@@ -1,12 +1,14 @@
 //*******BEGIN VISUALIZER FUNCTIONS********//
 
-function invertImageColors(){
-    current_webkit_filter_value = $("#image").css("-webkit-filter");
+function invertImageColors(number_of_image_to_invert){
+    if (typeof number_of_image_to_invert === 'undefined') {number_of_image_to_invert = current_visible_image_number;} //default
+    console.log(number_of_image_to_invert);
+    current_webkit_filter_value = $("#image"+number_of_image_to_invert).css("-webkit-filter");
     if(current_webkit_filter_value == "invert(0)"){
-        $("#image").css("-webkit-filter", "invert(100%)")
+        $("#image"+number_of_image_to_invert).css("-webkit-filter", "invert(100%)")
     }
     else{
-        $("#image").css("-webkit-filter", "invert(0%)")
+        $("#image"+number_of_image_to_invert).css("-webkit-filter", "invert(0%)")
     }
 }
 
@@ -81,9 +83,20 @@ function changeImageURL(image_url){
 
 //shuffleImage function
 //accepts the number of the image to be shown
+//if no image number is given as a argument, it chooses one at random from the page
+var current_visible_image_number = 1;
 function changeImage(number_of_image_to_show){
     $(".visual_image").css("z-index", -1); //hide all images
-    $("#image"+number_of_image_to_show).css("z-index", 0); //show desired image
+    if (typeof number_of_image_to_show === 'undefined') {
+        //if no image number arg given, choose one at random from page:
+        var total_num_images = $(".visual_image").length;
+        var random_number = Math.floor(Math.random()*total_num_images)+1;
+        $("#image"+random_number).css("z-index", 0); //show desired image
+    }
+    else{
+        $("#image"+number_of_image_to_show).css("z-index", 0); //show desired image
+    }
+    current_visible_image_number = number_of_image_to_show;
 }
 
 /*loadImages function
@@ -104,7 +117,7 @@ function loadImages(){
     }
     for (var i = 0; i < num_arguments; i++) {
         image_number = i+2; //so that first image is #image2
-        $("#image").after("<img src='"+arguments[i]+"' class='visual_image' id='image"+image_number+"'>");
+        $("#image1").after("<img src='"+arguments[i]+"' class='visual_image' id='image"+image_number+"'>");
     }
 }
 
@@ -138,7 +151,51 @@ function runThroughImages(){
             image_counter = 1;
             break;
     }
-    $("#image").attr("src", url_to_use);
+    $("#image1").attr("src", url_to_use);
 }
 
-/*******End Image Manipulation*******/
+/**********End Image Manipulation***********/
+
+
+
+/*******Begin Randomization Functions*******/
+
+//randomFrom function
+//choose random element from given array
+function randomFrom(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+/*randomize function
+**picks an animation function at random and does it for the given interval length, then picks another and repeats
+**interval length must be in the same units as the frequency at which this function is called
+**e.g., if this function is called once per beat (4), interval length should be the number of beats!
+**if no interval length specified, it defaults to 32 (2 measures when called 16 times per measure)
+**functions to animate from are hard-coded for now
+*/
+var randomize_counter = 1;
+var func;
+function randomize(interval_length){
+    if (typeof interval_length === 'undefined') {interval_length = 32;} //32 is default
+    if(randomize_counter == 1){
+        //hard-coded functions to randomize from:
+        func = randomFrom([
+            'rectangleAnimationChange', 
+            'rectangleAnimationChange2', 
+            'invertImageColors'
+            ]);
+    }
+    if(randomize_counter < interval_length){
+        //if we're in the middle of the interval:
+        window[func]();
+        randomize_counter++;
+    }
+    else{ //if we're at the end of the interval, start over
+        randomize_counter = 1;
+    }
+}
+
+/********End Randomization Functions********/
+
+
+

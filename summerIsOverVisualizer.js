@@ -75,7 +75,6 @@ function summerIsOver(){ //demo/testing 11/23/15.  https://soundcloud.com/anoraa
     doOnceAtACertainBeat(49, changeImage, 2);
     doOnceAtACertainBeat(81, changeImage, 10);
     doOnceAtACertainBeat(113, changeImage, 11);
-    //beat delay?
     doOnceAtACertainBeat(129, changeImage, 5);
     doOnceAtACertainBeat(145, changeImage, 4);
     doOnceAtACertainBeat(161, changeImage, 9);
@@ -89,4 +88,6 @@ function summerIsOver(){ //demo/testing 11/23/15.  https://soundcloud.com/anoraa
     doInTime(16, alternateRectangleChanges);
     doInTimeStartingOnBeat(1, animateCrossRectangles, 50, 81);
     
+    //randomize after 305th beat
+    doInTime(16, randomize, 305)
 }
