@@ -63,6 +63,9 @@
 		margin: auto;
 		position:absolute;
 		visibility: hidden;
+	}
+
+	.vertical_rectangle{
 		height:90%;
 		top:5%;
 	}

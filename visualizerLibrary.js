@@ -12,7 +12,43 @@ function invertImageColors(number_of_image_to_invert){
     }
 }
 
-function changeRectangleColor(rectangle_number){
+/*createEqualVerticalRectangles function
+**creates narrow vertical rectangles evenly spaced across the visualizer space
+**accepts the number of rectangles to be created and an optional color argument
+**color can either be a single color for all rectangles or can be an array of multiple colors
+**if color arg is an array of colors, each created rectangle will get a color from the array
+**DEFAULT color is black when no color is specified for a given rectangle
+**also optionally accepts a space_between parameter which is the % space that can be specified to be between each rectangle
+**if space_between is passed, the rectangles' widths will be auto-fitted 
+*/
+function createEqualVerticalRectangles(num_of_recs_to_create, color, space_between){
+    var num_of_existing_recs = $(".rectangle").length;
+    var rectangle_width;
+    if (typeof space_between === 'undefined') { //if no space between specified, make it even:
+        rectangle_width = 100/((num_of_recs_to_create*2)+1);
+    }
+    else{
+        rectangle_width = (100-((num_of_recs_to_create+1)*space_between))/num_of_recs_to_create;
+    }
+    for (var i = 1; i < num_of_recs_to_create+1; i++) {
+        if($.isArray(color) == true){ //if we are passed an array of colors:
+            rec_color = color[i-1];
+        }
+        else{ //if all rectangles are to be the same color:
+            rec_color = color;
+        }
+        if (typeof space_between === 'undefined') {
+            left_position = ((2*i)-1)*rectangle_width;
+        }
+        else{
+            left_position = (i*space_between)+((i-1)*rectangle_width);   
+        }
+        rectangle_number = num_of_existing_recs+i; //so that we don't overwrite any existing rectangles on page
+        $("#visualizer_space").append("<div class='rectangle vertical_rectangle' id='rectangle"+rectangle_number+"' style='width:"+rectangle_width+"%; left:"+left_position+"%; background-color:"+rec_color+"; visibility:visible;'></div>");
+    }
+}
+
+function changeRectangleVisibility(rectangle_number){
     var rectangle_display_property = $("#rectangle"+rectangle_number).css('visibility');
     //console.log(rectangle_display_property);
     if(rectangle_display_property == "hidden"){
@@ -27,52 +63,55 @@ function rectangleAnimationChange(){
     randomnumber = Math.floor(Math.random()*10)+1;
     switch(randomnumber) {
         case 1:
-            changeRectangleColor(1);
-            changeRectangleColor(2);
-            changeRectangleColor(3);
-            changeRectangleColor(4);
+            changeRectangleVisibility(1);
+            changeRectangleVisibility(2);
+            changeRectangleVisibility(3);
+            changeRectangleVisibility(4);
             break;
         case 2:
-            changeRectangleColor(1);
-            changeRectangleColor(2);
+            changeRectangleVisibility(1);
+            changeRectangleVisibility(2);
             break;
         case 3:
-            changeRectangleColor(1);
+            changeRectangleVisibility(1);
             break;
         case 4:
-            changeRectangleColor(3);
-            changeRectangleColor(4);
+            changeRectangleVisibility(3);
+            changeRectangleVisibility(4);
             break;
         case 5:
-            changeRectangleColor(3);
+            changeRectangleVisibility(3);
             break;
         case 6:
-            changeRectangleColor(5);
-            changeRectangleColor(6);
-            changeRectangleColor(7);
-            changeRectangleColor(8);
+            changeRectangleVisibility(5);
+            changeRectangleVisibility(6);
+            changeRectangleVisibility(7);
+            changeRectangleVisibility(8);
             break;
         case 7:
-            changeRectangleColor(5);
-            changeRectangleColor(6);
+            changeRectangleVisibility(5);
+            changeRectangleVisibility(6);
             break;
         case 8:
-            changeRectangleColor(5);
+            changeRectangleVisibility(5);
             break;
         case 9:
-            changeRectangleColor(7);
-            changeRectangleColor(8);
+            changeRectangleVisibility(7);
+            changeRectangleVisibility(8);
             break;
         case 10:
-            changeRectangleColor(7);
+            changeRectangleVisibility(7);
             break;
     }
 }
 function rectangleAnimationChange2(){
-    changeRectangleColor(9);
+    changeRectangleVisibility(9);
+}
+function hideRectangles(){
+    $(".rectangle").css('visibility', 'hidden');
 }
 function clearRectangles(){
-    $(".rectangle").css('visibility', 'hidden');
+    $(".rectangle").remove();
 }
 
 /*********Image Manipulation*******/

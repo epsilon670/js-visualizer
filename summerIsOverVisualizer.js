@@ -31,7 +31,7 @@ function alternateRectangleChanges(){
     rectangle_alternate_counter = 0;
   }
   if(rectangle_alternate_counter == 63 || rectangle_alternate_counter == 127){
-      clearRectangles();
+      hideRectangles();
   }
 }
 
@@ -62,6 +62,8 @@ var image_url11 = "http://static1.squarespace.com/static/54340e70e4b0ebdd5103c67
 //load images on the page as soon as page loads:
 $( document ).ready(function() {
     loadImages(image_url2, image_url3, image_url4, image_url5, image_url6, image_url7, image_url8, image_url9, image_url10, image_url11);
+    //TESTING 12/23/15:
+    createEqualVerticalRectangles(4, ['blue','red','green','yellow']);
 });
 
 
