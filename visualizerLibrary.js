@@ -12,6 +12,8 @@ function invertImageColors(number_of_image_to_invert){
     }
 }
 
+/**********Begin Rectangle Manipulation***********/
+
 /*createEqualVerticalRectangles function
 **creates narrow vertical rectangles evenly spaced across the visualizer space
 **accepts the number of rectangles to be created and an optional color argument
@@ -21,15 +23,13 @@ function invertImageColors(number_of_image_to_invert){
 **also optionally accepts a space_between parameter which is the % space that can be specified to be between each rectangle
 **if space_between is passed, the rectangles' widths will be auto-fitted 
 */
-function createEqualVerticalRectangles(num_of_recs_to_create, color, space_between){
+function createEqualVerticalRectangles(num_of_recs_to_create, color, space_between, z_index){
     var num_of_existing_recs = $(".rectangle").length;
     var rectangle_width;
-    if (typeof space_between === 'undefined') { //if no space between specified, make it even:
-        rectangle_width = 100/((num_of_recs_to_create*2)+1);
-    }
-    else{
-        rectangle_width = (100-((num_of_recs_to_create+1)*space_between))/num_of_recs_to_create;
-    }
+    if (typeof space_between === 'undefined') {rectangle_width = 100/((num_of_recs_to_create*2)+1);}
+    else{rectangle_width = (100-((num_of_recs_to_create+1)*space_between))/num_of_recs_to_create;}
+    if (typeof z_index === 'undefined') {z_index = 0;}
+    //create each rectangle on page:
     for (var i = 1; i < num_of_recs_to_create+1; i++) {
         if($.isArray(color) == true){ //if we are passed an array of colors:
             rec_color = color[i-1];
@@ -44,9 +44,57 @@ function createEqualVerticalRectangles(num_of_recs_to_create, color, space_betwe
             left_position = (i*space_between)+((i-1)*rectangle_width);   
         }
         rectangle_number = num_of_existing_recs+i; //so that we don't overwrite any existing rectangles on page
-        $("#visualizer_space").append("<div class='rectangle vertical_rectangle' id='rectangle"+rectangle_number+"' style='width:"+rectangle_width+"%; left:"+left_position+"%; background-color:"+rec_color+"; visibility:visible;'></div>");
+        $("#visualizer_space").append("<div class='rectangle vertical_rectangle' id='rectangle"+rectangle_number+"' style='width:"+rectangle_width+"%; left:"+left_position+"%; background-color:"+rec_color+"; z-index:"+z_index+"; visibility:visible;'></div>");
     }
 }
+
+/*createRandomVerticalRectangles function
+**same as createEqualVerticalRectangles except it randomly generates the rectangle widths
+**once randomly generated rec widths are calculated, the spacing between them is equal based on how much space remains
+**accepts num of rectangles to be created, optional color(s) for them (single value or array of values), and option z index value
+*/
+function createRandomVerticalRectangles(num_recs_to_create, color, z_index){
+    var num_of_existing_recs = $(".rectangle").length;
+    var rectangle_width;
+    var rectangle_width_array = new Array(num_recs_to_create);
+    var min_total_space = num_recs_to_create+1; //assumption is that each space must be at least 1% wide
+    if (typeof z_index === 'undefined') {z_index = 0;}
+    //generate random widths for each rectangle:
+    for (var i = 1; i < num_recs_to_create+1; i++) {
+        total_rec_widths = 0;
+        $.each(rectangle_width_array, function( i, val ) {
+            if (typeof val !== 'undefined') {total_rec_widths += val;}
+        });
+        available_space = 100-total_rec_widths-(min_total_space-i+1);
+        //use the min function below to ensure that no rectangle gets too big (i.e., bigger than 100/total # of rectangles).  This is so that the spacing looks nice
+        max_rec_width = Math.min(available_space/(num_recs_to_create-i+1), 100/num_recs_to_create);
+        random_width = Math.floor(Math.random()*max_rec_width)+1;
+        rectangle_width_array[i-1] = random_width;
+    }
+    //get the % of available width remaining after rectangles:
+    total_rec_widths = 0;
+    $.each(rectangle_width_array, function( i, val ) {
+        if (typeof val !== 'undefined') {total_rec_widths += val;}
+    });
+    available_space = 100-total_rec_widths;
+    var left_spacing = available_space/(num_recs_to_create+1);
+    var left_position = left_spacing;
+    //create each rectangle on page:
+    for (var i = 1; i < num_recs_to_create+1; i++) {
+        if($.isArray(color) == true){ //if we are passed an array of colors:
+            rec_color = color[i-1];
+        }
+        else{ //if all rectangles are to be the same color:
+            rec_color = color;
+        }
+        rectangle_width = rectangle_width_array[i-1];
+        rectangle_number = num_of_existing_recs+i; //so that we don't overwrite any existing rectangles on page
+        $("#visualizer_space").append("<div class='rectangle vertical_rectangle' id='rectangle"+rectangle_number+"' style='width:"+rectangle_width+"%; left:"+left_position+"%; background-color:"+rec_color+"; z-index:"+z_index+"; visibility:visible;'></div>");
+        //get next rectangle's left positioning:
+        left_position = left_position+left_spacing+rectangle_width;
+    }
+}
+
 
 function changeRectangleVisibility(rectangle_number){
     var rectangle_display_property = $("#rectangle"+rectangle_number).css('visibility');
@@ -114,7 +162,9 @@ function clearRectangles(){
     $(".rectangle").remove();
 }
 
-/*********Image Manipulation*******/
+/**********End Rectangle Manipulation***********/
+
+/*********Begin Image Manipulation*******/
 
 function changeImageURL(image_url){
     $("#image").attr("src", image_url);
