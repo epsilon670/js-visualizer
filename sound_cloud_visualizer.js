@@ -24,30 +24,32 @@ API documentation is here: http://developer.echonest.com/docs/v4/song.html
 
 var player = document.getElementById("player");
 var global_query;
+var global_sc_id;
 var search_fade_speed = 300;
 var ms_per_beat = 500; //start ms_per_beat at 500 as default
 var msPerBeat_array = new Array();
 var current_time = 0;
 var audio_duration = 0;
+var debug_mode = false;
 
-//TESTING
-/*var song = 'summer is over (rework)';
-var artist = 'Anoraak';*/
-var song = "the deep end";
-var artist = "holy ghost!";
-global_query = song+"+"+artist;
-GetSpotifySongInfo(global_query);
+//if in LIVE mode (i.e., not in in debug mode):
+if(debug_mode==false){
+    $("#debug_counters").remove(); //remove counters on page
+    $("#frequency_visualizer_test").remove();
+    //$("#visualizer_space").css("width", "500px");
+    //$("#visualizer_space").css("height", "500px");
+}
 
 
 /*****************************SOUNDCLOUD STUFF***********************************/
 
 var soundcloud_client_id = "81d37e14a99c54702e502072d8e2da23";
+
 SC.initialize({
   client_id: soundcloud_client_id
 });
 
 function sendSteamUrlToPlayer(stream_url){
-  stream_url = "https://api.soundcloud.com/tracks/98372279/stream"; //hardcode the deep end by holy ghost
   stream_url += "?client_id="+soundcloud_client_id;
   $("#player").attr("src", stream_url);
   GetMSPerBeatFromURL(stream_url, 'Soundcloud'); //get msperbeat based on soundcloud stream url (SLOW)
@@ -59,12 +61,7 @@ function populateSearchResultOnPage(element, index, array){
     $("#search_results_list").fadeIn(search_fade_speed);
 }
 
-//onClick of song from search results:
-//generate the stream url from a SC id and load it in the audio player
-function songSelect(sc_id){
-    var stream_url = "https://api.soundcloud.com/tracks/"+sc_id+"/stream";
-    sendSteamUrlToPlayer(stream_url); //load stream in player
-    GetSpotifySongInfo(global_query);
+function populateSoundcloudInfoOnPage(sc_id){
     //get track info so we can attribute it on page:
     $("#soundcloud_attribution").css('visibility', 'visible');
     SC.get('/tracks/'+sc_id).then(function(track) {
@@ -73,6 +70,18 @@ function songSelect(sc_id){
       $("#soundcloud_title_display").html(title);
       $("#soundcloud_creator_display").html(creator);
     });
+}
+
+//onClick of song from search results:
+//generate the stream url from a SC id and load it in the audio player
+function songSelect(sc_id){
+    var stream_url = "https://api.soundcloud.com/tracks/"+sc_id+"/stream";
+    global_sc_id = sc_id; //so that other functions can use given sc_id
+    msPerBeat_array.length = 0; //clear any old ms_per_beat values from previous songs
+    initializeVisualization(global_sc_id); //initialize visualization stuff
+    sendSteamUrlToPlayer(stream_url); //load stream in player
+    GetSpotifySongInfo(global_query);
+    populateSoundcloudInfoOnPage(sc_id);
     $("#search_results_list").fadeOut(search_fade_speed);
 };
 
@@ -97,15 +106,21 @@ $('#search_form').submit(function () {
     return false; //don't refresh the page
 });
 
-//TESTING: Get Soundcloud info (for hard-coded song and artist above);
-SC.get('/tracks', {
-  q: song + artist
-}).then(function(tracks) {
-  //console.log(tracks);
-  //get stream URL from soundcloud query:
-  var stream_url = tracks[0]['stream_url']
-  sendSteamUrlToPlayer(stream_url);
-});
+
+
+//Hard code a song query to begin:
+global_sc_id = 98372279; //The Deep End by Holy Ghost!
+var song = "the deep end";
+var artist = "holy ghost!";
+/*var song = 'summer is over (rework)';
+var artist = 'Anoraak';*/
+stream_url = "https://api.soundcloud.com/tracks/"+global_sc_id+"/stream";
+initializeVisualization(global_sc_id); //initialize visualization stuff for hard-coded song
+sendSteamUrlToPlayer(stream_url);
+populateSoundcloudInfoOnPage(global_sc_id);
+global_query = song+"+"+artist;
+GetSpotifySongInfo(global_query);
+
 
 /*************************GENERAL BPM STUFF*************************************/
 
@@ -192,11 +207,6 @@ function beatsPerMillisecondCallback(returned_ms_per_beat, source){
             if(msPerBeat_array[i][0] != 0){
                 //if the given source returned a valid tempo:
                 ms_per_beat = msPerBeat_array[i][0];
-                /* //commented out during development 11/8/15, not sure if we want this or not
-                //if music is playing and visualizer is currently going, re-initialize it with new ms_per_beat value
-                if (typeof visualizer_interval !== "undefined"){
-                    visualizer();
-                }*/
             }
         }
     }
@@ -514,6 +524,14 @@ function doInTimeStartingOnBeat(number_of_times_per_measure, thing_to_do, start,
     }
 }
 
+//takes optional 3rd parameter which is passed to the "thing_to_do" function as its parameter
+function doOnceAtACertainBeat(time_to_do_thing, thing_to_do){
+  var beat = convertTimeToBeats(time_to_do_thing);
+  if(infinite_counter == beat){
+    thing_to_do(arguments[2]);
+  }
+}
+
 /*converts time to beats based on the units specified
 **E.g., input could be 4s, 4e, 4b, 4m, or just 4
 **4s = 4 sixteenth notes = 1 beat
@@ -571,35 +589,36 @@ function rounder(number, decimals_to_round){
   return rounded_number;
 }
 
-//takes optional 3rd parameter which is passed to the "thing_to_do" function as its parameter
-function doOnceAtACertainBeat(time_to_do_thing, thing_to_do){
-  var beat = convertTimeToBeats(time_to_do_thing);
-  if(infinite_counter == beat){
-    thing_to_do(arguments[2]);
-  }
-}
-
 var visualizerSwitch = function visualizerSwitch(){
     
     SetCounters();
 
     //experimental 11/19:
     //doInTime(1, alternateInTime); //every measure
-    //summerIsOver(); //special programming for summerIsOver
-    theDeepEnd(); //special programming for the deep end by holy ghost!
 
-    //display four count number on page
-    if(Number.isInteger(whole_counter)){
-        $("#counter_debug").html(whole_counter);
+    switch(global_sc_id) {
+        case 98372279:
+            theDeepEnd(); //special programming for the deep end by holy ghost!
+            break;
+        case 145327315:
+            summerIsOver(); //special programming for summerIsOver
+            break;
+        default:
+            doInTime(16, randomize)
+            break;
     }
 
-    if(Number.isInteger(infinite_counter)){
-      $("#infinite_counter_debug").html(infinite_counter);
+    if(debug_mode == true){
+        //display four count number on page
+        if(Number.isInteger(whole_counter)){
+          $("#counter_debug").html(whole_counter);
+        }
+        if(Number.isInteger(infinite_counter)){
+            $("#infinite_counter_debug").html(infinite_counter);
+        }
+        current_time = rounder(player.currentTime, 3);
+        $("#current_time").html(current_time+" / "+audio_duration);
     }
-
-    //TESTING 11/25
-    current_time = rounder(player.currentTime, 3);
-    $("#current_time").html(current_time+" / "+audio_duration);
 }
 
 
@@ -611,14 +630,53 @@ function visualizer(){
     audio_duration = rounder(player.duration, 3); //set audio length
     console.log("MS per beat for visualizer is: "+ms_per_beat);
     //run visualizerSwitch function in time with the beat:
-    /*TESTING 11/23/15*/if(global_query == "summer is over (rework)+Anoraak"){
-      //delay animation start by 1 beat
-      setTimeout(function() {
-        visualizer_interval = window.setInterval(visualizerSwitch, ms_per_beat/4);
-       }, ms_per_beat);
+    if(global_sc_id == 145327315){ //summer is over - anoraak
+        //delay animation start by 1 beat for
+        setTimeout(function() {
+            visualizer_interval = window.setInterval(visualizerSwitch, ms_per_beat/4);
+           }, ms_per_beat);
     }
     else{ //no delay:
       visualizer_interval = window.setInterval(visualizerSwitch, ms_per_beat/4);
+    }
+}
+
+/*initializeVisualization function
+**clears out anything from past visualizations (both custom visualizer js files and elements in visualizer_space div)
+**initializes any custom visualizaer js files by adding them to the page
+**needs to be run after ms_per_beat is calculated in order to add proper delay for songs whose beats start after 0:00
+*/
+function initializeVisualization(global_sc_id){
+    console.log("initialize visualizer!");
+    $("#visualizer_space").empty(); //clear visualizer space of old elements
+    $(".custom_visualizer_script_file").remove(); //remove any custom visualizer js files from document
+    switch(global_sc_id) { //add custom js files if necessary:
+        case 98372279: //the deep end - holy ghost
+            loadjscssfile("theDeepEnd.js", "js");
+            break;
+        case 145327315: //summer is over - anoraak
+            loadjscssfile("summerIsOverVisualizer.js", "js");
+            break;
+    }
+}
+
+//function for dynamically loading js or css file to the page
+//from http://www.javascriptkit.com/javatutors/loadjavascriptcss.shtml
+function loadjscssfile(filename, filetype){
+    if (filetype=="js"){ //if filename is a external JavaScript file
+        var fileref=document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("class","custom_visualizer_script_file");
+        fileref.setAttribute("src", filename);
+    }
+    else if (filetype=="css"){ //if filename is an external CSS file
+        var fileref=document.createElement("link")
+        fileref.setAttribute("rel", "stylesheet")
+        fileref.setAttribute("type", "text/css")
+        fileref.setAttribute("href", filename)
+    }
+    if (typeof fileref!="undefined"){
+        document.getElementsByTagName("body")[0].appendChild(fileref)
     }
 }
 

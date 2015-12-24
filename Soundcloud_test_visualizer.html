@@ -20,9 +20,13 @@
 </head>
 <body>
 
-<span id="counter_debug">1</span>
-<span id="infinite_counter_debug">1</span>
-<span id="current_time">0</span>
+<div id="debug_counters">
+    <!--*********DEBUG********-->
+    <span id="counter_debug">1</span>
+    <span id="infinite_counter_debug">1</span>
+    <span id="current_time">0</span>
+</div>
+
 
 <div id="soundcloud_attribution_container">
     <div id="soundcloud_attribution">
@@ -37,18 +41,6 @@
         <img src="inc/powered_by_soundcloud.png">
     </a>
 </div>
-
-
-
-<!--*************************BEGIN VISUALIZER SPACE*************************-->
-
-<div class="centered_div" id="visualizer_space">
-    <img src="" class="visual_image" id="image1">
-</div>
-
-<!--*************************END VISUALIZER SPACE***************************-->
-
-
 
 <br>
 
@@ -72,7 +64,17 @@
 
 <br>
 
-<div id="example">
+<!--*************************BEGIN VISUALIZER SPACE*************************-->
+
+<div class="centered_div" id="visualizer_space">
+    
+</div>
+
+<!--*************************END VISUALIZER SPACE***************************-->
+
+
+<div id="frequency_visualizer_test">
+<!--*********TESTING********-->
 
     <div id="visualisation" class="hideIfNoApi"> 
         <div style="left: 0%; height: 0px;"></div>
@@ -113,10 +115,6 @@
 
 <script type="text/javascript" src="sound_cloud_visualizer.js"> </script>
 <script type="text/javascript" src="visualizerLibrary.js"> </script>
-<!--<script type="text/javascript" src="summerIsOverVisualizer.js"> </script>-->
-<script type="text/javascript" src="theDeepEnd.js"> </script>
-
-</div>
 
 </body>
 </html>
