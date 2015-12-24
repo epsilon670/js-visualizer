@@ -22,10 +22,10 @@ var rectangle_alternate_counter = 0;
 function alternateRectangleChanges(){
   rectangle_alternate_counter++;
   if(rectangle_alternate_counter < 64){
-    randomRectangleAnimation();
+    randomRectangleAnimation("vertical_rectangle");
   }
   else if(rectangle_alternate_counter < 128){
-    rectangleAnimationChange2(); 
+    changeRectangleVisibility(9);
   }
   else{
     rectangle_alternate_counter = 0;
@@ -59,12 +59,14 @@ var image_url10 = "http://2.bp.blogspot.com/_4ARUtqkw2pM/S7S8plWtqYI/AAAAAAAAAn8
 //gif of colorful hand giving peace sign and thumbs up
 var image_url11 = "http://static1.squarespace.com/static/54340e70e4b0ebdd5103c677/545d46f4e4b0263200d209c8/545d46f8e4b02ca19c76c924/1415399193202/f14aacae842b56fb0f3e5208eb9f4740.gif";
 
-//load images on the page as soon as page loads:
+
+//STUFF TO INITIALIZE:
 $( document ).ready(function() {
     loadImages(image_url2, image_url3, image_url4, image_url5, image_url6, image_url7, image_url8, image_url9, image_url10, image_url11);
     //TESTING 12/23/15:
     //createEqualVerticalRectangles(4,['orange','black','white','purple']);
-    createVerticalRectangles(8, ['blue','red','green','yellow'], 2, "visible", "random");
+    createVerticalRectangles({num_recs_to_create:8, z_index:1, visibility:"hidden", space_between:"random"});
+    createCustomRectangle({height: 50, width: 20, left:55, top:20, visibility:"hidden"});
 });
 
 

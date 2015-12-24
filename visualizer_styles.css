@@ -70,46 +70,6 @@
 		top:5%;
 	}
 
-	#rectangle1{
-		width:5%;
-		left:15%;
-	}
-	#rectangle2{
-		width:2%;
-		left:21%;
-	}
-	#rectangle3{
-		width:8%;
-		left:42%;
-	}
-	#rectangle4{
-		width:2%;
-		left:51%;
-	}
-	#rectangle5{
-		width:5%;
-		left:73%;
-	}
-	#rectangle6{
-		width:2%;
-		left:79%;
-	}
-	#rectangle7{
-		width:2%;
-		left:87%;
-	}
-	#rectangle8{
-		width:2%;
-		left:91%;
-	}
-
-	#rectangle9{
-		height:50%;
-		top:20%;
-		width:20%;
-		left:55%;
-	}
-
 	.cross_rectangle{
 		position:absolute;
 		visibility:visible;

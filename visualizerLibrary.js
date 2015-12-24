@@ -16,23 +16,27 @@ function invertImageColors(number_of_image_to_invert){
 
 /*createEqualVerticalRectangles function
 **creates narrow vertical rectangles evenly spaced across the visualizer space
-**accepts the number of rectangles to be created and an optional color argument
+**accepts an object that contains the arguments
+**possible arguments: 
+    Required: num_recs_to_create
+    Optional: color, z_index, visibility, space_between
 **color can either be a single color for all rectangles or can be an array of multiple colors
-**if color arg is an array of colors, each created rectangle will get a color from the array
-**DEFAULT color is black when no color is specified for a given rectangle
+    if color arg is an array of colors, each created rectangle will get a color from the array
+    DEFAULT color is black when no color is specified for a given rectangle
 **also optionally accepts a space_between parameter which is the % space that can be specified to be between each rectangle
-**if space_between is passed, the rectangles' widths will be auto-fitted 
-**if space_between is set to "random", rectangle widths will by randomly generated
-    **once randomly generated rec widths are calculated, the spacing between them is set to be equal based on how much space remains out of 100%
+    if space_between is passed, the rectangles' widths will be auto-fitted 
+    if space_between is set to "random", rectangle widths will by randomly generated
+        **once randomly generated rec widths are calculated, the spacing between them is set to be equal based on how much space remains out of 100%
 */
-function createVerticalRectangles(num_recs_to_create, color, z_index, visibility, space_between){
+function createVerticalRectangles(oArg){
     var num_of_existing_recs = $(".rectangle").length;
     var rectangle_width;
+    var num_recs_to_create =  oArg.num_recs_to_create
     var left_spacing = 0; //only used for random rectangle widths
-    if (typeof space_between === 'undefined') { //if no spacing parameter passed:
+    if (typeof oArg.space_between === 'undefined') { //if no spacing parameter passed:
         rectangle_width = 100/((num_recs_to_create*2)+1);
     }
-    else if(space_between == 'random'){ //if rectangle widths should be random:
+    else if(oArg.space_between == 'random'){ //if rectangle widths should be random:
         var rectangle_width_array = new Array(num_recs_to_create);
         var min_total_space = num_recs_to_create+1; //assumption is that each space must be at least 1% wide
         //generate random widths for each rectangle:
@@ -57,36 +61,51 @@ function createVerticalRectangles(num_recs_to_create, color, z_index, visibility
         var left_position = left_spacing;
     }
     else{ //if a specific spacing is specified:
-        rectangle_width = (100-((num_recs_to_create+1)*space_between))/num_recs_to_create;
+        rectangle_width = (100-((num_recs_to_create+1)*oArg.space_between))/num_recs_to_create;
     }
     //z-index default
-    if (typeof z_index === 'undefined') {z_index = 0;}
+    if (typeof oArg.z_index === 'undefined') {z_index = 0;}else{z_index = oArg.z_index}
     //visibility default
-    if (typeof visibility === 'undefined') {visibility = "visible";}
+    if (typeof oArg.visibility === 'undefined') {visibility = "visible";}else{visibility = oArg.visibility}
     //create each rectangle on page:
     for (var i = 1; i < num_recs_to_create+1; i++) {
-        if($.isArray(color) == true){ //if we are passed an array of colors:
-            rec_color = color[i-1];
+        if($.isArray(oArg.color) == true){ //if we are passed an array of colors:
+            rec_color = oArg.color[i-1];
         }
         else{ //if all rectangles are to be the same color:
-            rec_color = color;
+            rec_color = oArg.color;
         }
         //generate rectangle width and left position CSS values:
-        if (typeof space_between === 'undefined') {
+        if (typeof oArg.space_between === 'undefined') {
             left_position = ((2*i)-1)*rectangle_width;
         }
-        else if(space_between == 'random'){
+        else if(oArg.space_between == 'random'){
             rectangle_width = rectangle_width_array[i-1];
             rectangle_number = num_of_existing_recs+i; //so that we don't overwrite any existing rectangles on page
         }
         else{
-            left_position = (i*space_between)+((i-1)*rectangle_width);   
+            left_position = (i*oArg.space_between)+((i-1)*rectangle_width);   
         }
         rectangle_number = num_of_existing_recs+i; //so that we don't overwrite any existing rectangles on page
         $("#visualizer_space").append("<div class='rectangle vertical_rectangle' id='rectangle"+rectangle_number+"' style='width:"+rectangle_width+"%; left:"+left_position+"%; background-color:"+rec_color+"; z-index:"+z_index+"; visibility:"+visibility+";'></div>");
         //get next rectangle's left positioning (only relevant if space_between is set to "random":
         left_position = left_position+left_spacing+rectangle_width;
     }
+}
+
+/*createCustomRectangle function
+**accepts an object that contains the arguments
+**possible arguments: 
+    Required: height, width, left, top, 
+    Optional: color, z_index, visibility
+*/
+function createCustomRectangle(oArg){
+    if (typeof oArg.color === 'undefined') {color = "black";} else{color = oArg.color}
+    if (typeof oArg.z_index === 'undefined') {z_index = 0;} else{z_index = oArg.z_index}
+    if (typeof oArg.visibility === 'undefined') {visibility = "visible";} else{visibility = oArg.visibility}
+    var num_of_existing_recs = $(".rectangle").length;
+    var new_rectangle_number = num_of_existing_recs+1;
+    $("#visualizer_space").append("<div class='rectangle' id='rectangle"+new_rectangle_number+"' style='height:"+oArg.height+"%; width:"+oArg.width+"%; left:"+oArg.left+"%; top:"+oArg.top+"%; background-color:"+color+"; z-index:"+z_index+"; visibility:"+visibility+";'></div>");
 }
 
 
@@ -102,57 +121,52 @@ function changeRectangleVisibility(rectangle_number){
 }
 
 //randomly toggle visibility of all rectangles on page
-function randomRectangleAnimation(){
-    var num_recs_on_page = $(".rectangle").length;
-    randomnumber = Math.floor(Math.random()*10)+1;
-    switch(randomnumber) {
-        case 1:
-            for (var i = 1; i < 5; i++) {
-                changeRectangleVisibility(i);
-            }
-            break;
-        case 2:
-            for (var i = 1; i < 3; i++) {
-                changeRectangleVisibility(i);
-            }
-            break;
-        case 3:
-            changeRectangleVisibility(1);
-            break;
-        case 4:
-            for (var i = 3; i < 5; i++) {
-                changeRectangleVisibility(i);
-            }
-            break;
-        case 5:
-            changeRectangleVisibility(3);
-            break;
-        case 6:
-            for (var i = 5; i < 9; i++) {
-                changeRectangleVisibility(i);
-            }
-            break;
-        case 7:
-            for (var i = 5; i < 7; i++) {
-                changeRectangleVisibility(i);
-            }
-            break;
-        case 8:
-            changeRectangleVisibility(5);
-            break;
-        case 9:
-            for (var i = 7; i < 9; i++) {
-                changeRectangleVisibility(i);
-            }
-            break;
-        case 10:
-            changeRectangleVisibility(7);
-            break;
+//optionally accepts a rectangle_class argument that can limit it to only rectangles of a certain CSS class
+function randomRectangleAnimation(rectangle_class){
+    if (typeof rectangle_class === 'undefined') {rectangle_class = "rectangle";}
+    var num_recs_on_page = $("."+rectangle_class).length;
+    var randomNumber1 = Math.floor(Math.random()*2)+1;
+    if(randomNumber1 == 1){
+        randomNumber2 = Math.floor(Math.random()*num_recs_on_page)+1;
+        changeRectangleVisibility(randomNumber2);
+    }
+    else{ //animate rectangles in groups:
+        randomNumber2 = Math.floor(Math.random()*4)+1;
+        switch(randomNumber2) {
+            case 1:
+                //animate the first half of the rectangles:
+                x = rounder(num_recs_on_page/2,0)+1;
+                for (var i = 1; i < x; i++) {
+                    changeRectangleVisibility(i);
+                }
+                break;
+            case 2:
+                //animate the 2nd half of the rectangles:
+                x = rounder(num_recs_on_page/2,0)+1;
+                for (var i = x; i < num_recs_on_page; i++) {
+                    rounder(i, 0);
+                    changeRectangleVisibility(i);
+                }
+                break;
+            case 3:
+                //animate the 1st quarter of the rectangles:
+                x = rounder(num_recs_on_page/4,0)+1;
+                for (var i = 1; i < x; i++) {
+                    changeRectangleVisibility(i);
+                }
+                break;
+            case 4:
+                //animate the last quarter of the rectangles:
+                x = rounder((num_recs_on_page/4)*3,0)+1;
+                for (var i = x; i < num_recs_on_page; i++) {
+                    rounder(i, 0);
+                    changeRectangleVisibility(i);
+                }
+                break;
+        }
     }
 }
-function rectangleAnimationChange2(){
-    changeRectangleVisibility(9);
-}
+
 function hideRectangles(){
     $(".rectangle").css('visibility', 'hidden');
 }
