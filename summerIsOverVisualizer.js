@@ -22,7 +22,7 @@ var rectangle_alternate_counter = 0;
 function alternateRectangleChanges(){
   rectangle_alternate_counter++;
   if(rectangle_alternate_counter < 64){
-    rectangleAnimationChange();
+    randomRectangleAnimation();
   }
   else if(rectangle_alternate_counter < 128){
     rectangleAnimationChange2(); 
@@ -64,7 +64,7 @@ $( document ).ready(function() {
     loadImages(image_url2, image_url3, image_url4, image_url5, image_url6, image_url7, image_url8, image_url9, image_url10, image_url11);
     //TESTING 12/23/15:
     //createEqualVerticalRectangles(4,['orange','black','white','purple']);
-    createRandomVerticalRectangles(4, ['blue','red','green','yellow'], 2);
+    createVerticalRectangles(8, ['blue','red','green','yellow'], 2, "visible", "random");
 });
 
 
