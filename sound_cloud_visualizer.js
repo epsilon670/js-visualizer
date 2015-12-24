@@ -31,8 +31,10 @@ var current_time = 0;
 var audio_duration = 0;
 
 //TESTING
-var song = 'summer is over (rework)';
-var artist = 'Anoraak';
+/*var song = 'summer is over (rework)';
+var artist = 'Anoraak';*/
+var song = "the deep end";
+var artist = "holy ghost!";
 global_query = song+"+"+artist;
 GetSpotifySongInfo(global_query);
 
@@ -45,7 +47,7 @@ SC.initialize({
 });
 
 function sendSteamUrlToPlayer(stream_url){
-  //stream_url = "https://api.soundcloud.com/tracks/98372279/stream"; //hardcode the deep end by holy ghost
+  stream_url = "https://api.soundcloud.com/tracks/98372279/stream"; //hardcode the deep end by holy ghost
   stream_url += "?client_id="+soundcloud_client_id;
   $("#player").attr("src", stream_url);
   GetMSPerBeatFromURL(stream_url, 'Soundcloud'); //get msperbeat based on soundcloud stream url (SLOW)
@@ -583,8 +585,8 @@ var visualizerSwitch = function visualizerSwitch(){
 
     //experimental 11/19:
     //doInTime(1, alternateInTime); //every measure
-
-    summerIsOver(); //special programming for summerIsOver
+    //summerIsOver(); //special programming for summerIsOver
+    theDeepEnd(); //special programming for the deep end by holy ghost!
 
     //display four count number on page
     if(Number.isInteger(whole_counter)){

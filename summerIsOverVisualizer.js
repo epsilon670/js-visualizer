@@ -62,9 +62,8 @@ var image_url11 = "http://static1.squarespace.com/static/54340e70e4b0ebdd5103c67
 
 //STUFF TO INITIALIZE:
 $( document ).ready(function() {
-    loadImages(image_url2, image_url3, image_url4, image_url5, image_url6, image_url7, image_url8, image_url9, image_url10, image_url11);
+    loadImages(image_url1, image_url2, image_url3, image_url4, image_url5, image_url6, image_url7, image_url8, image_url9, image_url10, image_url11);
     //TESTING 12/23/15:
-    //createEqualVerticalRectangles(4,['orange','black','white','purple']);
     createVerticalRectangles({num_recs_to_create:8, z_index:1, visibility:"hidden", space_between:"random"});
     createCustomRectangle({height: 50, width: 20, left:55, top:20, visibility:"hidden"});
 });

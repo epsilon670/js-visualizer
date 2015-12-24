@@ -19,7 +19,7 @@ function invertImageColors(number_of_image_to_invert){
 **accepts an object that contains the arguments
 **possible arguments: 
     Required: num_recs_to_create
-    Optional: color, z_index, visibility, space_between
+    Optional: color, z_index, height, top, visibility, space_between, class name for new elements
 **color can either be a single color for all rectangles or can be an array of multiple colors
     if color arg is an array of colors, each created rectangle will get a color from the array
     DEFAULT color is black when no color is specified for a given rectangle
@@ -87,7 +87,7 @@ function createVerticalRectangles(oArg){
             left_position = (i*oArg.space_between)+((i-1)*rectangle_width);   
         }
         rectangle_number = num_of_existing_recs+i; //so that we don't overwrite any existing rectangles on page
-        $("#visualizer_space").append("<div class='rectangle vertical_rectangle' id='rectangle"+rectangle_number+"' style='width:"+rectangle_width+"%; left:"+left_position+"%; background-color:"+rec_color+"; z-index:"+z_index+"; visibility:"+visibility+";'></div>");
+        $("#visualizer_space").append("<div class='rectangle vertical_rectangle "+oArg.class+"' id='rectangle"+rectangle_number+"' style='width:"+rectangle_width+"%; height:"+oArg.height+"%; left:"+left_position+"%; top:"+oArg.top+"%; background-color:"+rec_color+"; z-index:"+z_index+"; visibility:"+visibility+";'></div>");
         //get next rectangle's left positioning (only relevant if space_between is set to "random":
         left_position = left_position+left_spacing+rectangle_width;
     }
@@ -125,10 +125,16 @@ function changeRectangleVisibility(rectangle_number){
 function randomRectangleAnimation(rectangle_class){
     if (typeof rectangle_class === 'undefined') {rectangle_class = "rectangle";}
     var num_recs_on_page = $("."+rectangle_class).length;
+    var id_array = new Array();
+    $("."+rectangle_class).each(function(index){
+         id = $(this).attr("id");
+         id = id.replace("rectangle", "");
+         id_array[index] = id;
+    });
     var randomNumber1 = Math.floor(Math.random()*2)+1;
     if(randomNumber1 == 1){
         randomNumber2 = Math.floor(Math.random()*num_recs_on_page)+1;
-        changeRectangleVisibility(randomNumber2);
+        changeRectangleVisibility(id_array[randomNumber2]);
     }
     else{ //animate rectangles in groups:
         randomNumber2 = Math.floor(Math.random()*4)+1;
@@ -137,7 +143,7 @@ function randomRectangleAnimation(rectangle_class){
                 //animate the first half of the rectangles:
                 x = rounder(num_recs_on_page/2,0)+1;
                 for (var i = 1; i < x; i++) {
-                    changeRectangleVisibility(i);
+                    changeRectangleVisibility(id_array[i]);
                 }
                 break;
             case 2:
@@ -145,14 +151,14 @@ function randomRectangleAnimation(rectangle_class){
                 x = rounder(num_recs_on_page/2,0)+1;
                 for (var i = x; i < num_recs_on_page; i++) {
                     rounder(i, 0);
-                    changeRectangleVisibility(i);
+                    changeRectangleVisibility(id_array[i]);
                 }
                 break;
             case 3:
                 //animate the 1st quarter of the rectangles:
                 x = rounder(num_recs_on_page/4,0)+1;
                 for (var i = 1; i < x; i++) {
-                    changeRectangleVisibility(i);
+                    changeRectangleVisibility(id_array[i]);
                 }
                 break;
             case 4:
@@ -160,16 +166,18 @@ function randomRectangleAnimation(rectangle_class){
                 x = rounder((num_recs_on_page/4)*3,0)+1;
                 for (var i = x; i < num_recs_on_page; i++) {
                     rounder(i, 0);
-                    changeRectangleVisibility(i);
+                    changeRectangleVisibility(id_array[i]);
                 }
                 break;
         }
     }
 }
 
-function hideRectangles(){
-    $(".rectangle").css('visibility', 'hidden');
+function hideRectangles(rectangle_class){
+    if (typeof rectangle_class === 'undefined') {rectangle_class = "rectangle";}
+    $("."+rectangle_class).css('visibility', 'hidden');
 }
+
 function clearRectangles(){
     $(".rectangle").remove();
 }

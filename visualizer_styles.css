@@ -56,6 +56,7 @@
 
 	#image1{
 		z-index: 0; /*set this to be visible image to start*/	
+		border:0px;
 	}
 
 	.rectangle{
