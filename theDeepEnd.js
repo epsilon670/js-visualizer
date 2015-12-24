@@ -16,8 +16,9 @@ function alternateRectangleChanges(){
   }
 }
 
-function counterFadeIn(){
+function fullFadeIn(){
   $("#visual_counter").fadeIn(2000);
+  $("#visualizer_space").fadeIn(2000);
 }
 function introFadeIn(){
   $(".equal_vertical_rectangle").fadeIn(ms_per_beat*21);
@@ -42,8 +43,8 @@ var image_url1 = "https://img0.etsystatic.com/000/0/6604604/il_570xN.290724650.j
 
 //STUFF TO INITIALIZE:
 $( document ).ready(function() {
-    //loadImages(image_url1);
-    //TESTING 12/23/15:
+    $("#visualizer_space").css("display", "none"); //temporarily hide visualizer space until visuals begin
+    $("#visualizer_space").css("background-color", "white");
     createVerticalRectangles({num_recs_to_create:4, z_index:1, class:"equal_vertical_rectangle"});
     $(".equal_vertical_rectangle").css("display", "none");
     createVerticalRectangles({num_recs_to_create:6, height:40, top:55, z_index:1, space_between:"random", visibility:"hidden", class:"small_vertical_rectangles"});
@@ -56,7 +57,7 @@ function theDeepEnd(){ //demo/testing 12/23/15.
     //65 is downbeat of first piano lick
     //97 is downbeat of where bass drops (?)
 
-    doOnceAtACertainBeat(2, counterFadeIn);
+    doOnceAtACertainBeat(2, fullFadeIn);
     doOnceAtACertainBeat(45, introFadeIn);
     doOnceAtACertainBeat(41, counterFadeOut);
 

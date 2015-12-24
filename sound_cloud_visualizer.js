@@ -1,9 +1,12 @@
 
-/*TO DO 11/19/15:
+/*TO DO 12/24/15:
+-error messages for when sound cloud songs don't load properly (replicator: cut copy's meet me in a house of love remix)
+-loading icon for search AND soundcloud tempo fetching (see switch statement inside beatsPerMillisecondCallback function)
+-better default visualizations when not using custom programming
+
+-Either figure out how to use the frequency visualizations or hide them from the page
 -Make the Soundcloud BPM calculation the default (spotify can be wrong sometimes)
     -BPM calc in general needs work - it's off for some songs
--loading icon for search AND soundcloud tempo fetching (see switch statement inside beatsPerMillisecondCallback function)
--Either figure out how to use the frequency visualizations or hide them from the page
 */
 
 /*OUTSTANDING ISSUES 11/19/15
@@ -36,8 +39,8 @@ var debug_mode = false;
 if(debug_mode==false){
     $("#debug_counters").remove(); //remove counters on page
     $("#frequency_visualizer_test").remove();
-    //$("#visualizer_space").css("width", "500px");
-    //$("#visualizer_space").css("height", "500px");
+    $("#visualizer_space").css("width", "80%");
+    $("#visualizer_space").css("height", "75%");
 }
 
 
@@ -60,6 +63,14 @@ function populateSearchResultOnPage(element, index, array){
     $("#search_results_list").append("<li class='search_result' onClick='songSelect("+element['id']+")'>"+element['title']+"</li>");
     $("#search_results_list").fadeIn(search_fade_speed);
 }
+//hide search results when user clicks anywhere else on page
+$(document).mouseup(function (e){
+    var search_results_list = $("#search_results_list");
+    if (!search_results_list.is(e.target) // if the target of the click isn't the search_results_list...
+        && search_results_list.has(e.target).length === 0) // ... nor a descendant of the search_results_list
+    {search_results_list.hide();}
+});
+
 
 function populateSoundcloudInfoOnPage(sc_id){
     //get track info so we can attribute it on page:
@@ -82,6 +93,8 @@ function songSelect(sc_id){
     sendSteamUrlToPlayer(stream_url); //load stream in player
     GetSpotifySongInfo(global_query);
     populateSoundcloudInfoOnPage(sc_id);
+    //change play/pause controller back to play mode:
+    $("#audioControl").html('<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> <span id="play_pause">Play</span>');
     $("#search_results_list").fadeOut(search_fade_speed);
 };
 
@@ -120,6 +133,22 @@ sendSteamUrlToPlayer(stream_url);
 populateSoundcloudInfoOnPage(global_sc_id);
 global_query = song+"+"+artist;
 GetSpotifySongInfo(global_query);
+
+
+/*************************AUDIO PLAYER STUFF************************************/
+
+//play and pause button
+$("#audioControl").click(function () {
+    // Update the Button
+    if($("#play_pause").html() === 'Pause') {
+        player.pause();
+        $("#audioControl").html('<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> <span id="play_pause">Play</span>');
+    }
+    else{
+        player.play();
+        $("#audioControl").html('<span class="glyphicon glyphicon-pause" aria-hidden="true"></span> <span id="play_pause">Pause</span>');   
+    }
+});
 
 
 /*************************GENERAL BPM STUFF*************************************/
@@ -433,6 +462,22 @@ function SetCounters(){
     eight_counter = counterManager(eight_counter, 0.125); //outputs 1-32.75 over eight measures then resets
 }
 
+//only call this when changing the song entirely
+function resetCounters(){
+    infinite_counter = 1;
+    sixteenth_counter = 1;
+    eighth_counter = 1;
+    quarter_counter = 1;
+    half_counter = 1;
+    whole_counter = 1;
+    two_counter = 1;
+    four_counter = 1;
+    eight_counter =1;
+    randomize_counter = 1;
+    current_visible_image_number = 1;
+    image_counter = 1;
+}
+
 function getAppropriateCounter(number_of_times_per_measure){
     //set the appropriate counter to watch based on number_of_times_per_measure
     switch(number_of_times_per_measure) {
@@ -604,7 +649,7 @@ var visualizerSwitch = function visualizerSwitch(){
             summerIsOver(); //special programming for summerIsOver
             break;
         default:
-            doInTime(16, randomize)
+            doInTime(16, randomRectangleAnimation)
             break;
     }
 
@@ -647,8 +692,15 @@ function visualizer(){
 **needs to be run after ms_per_beat is calculated in order to add proper delay for songs whose beats start after 0:00
 */
 function initializeVisualization(global_sc_id){
-    console.log("initialize visualizer!");
+    console.log("Visualizer Initialized");
+    if (typeof visualizer_interval !== "undefined"){
+        window.clearInterval(visualizer_interval); //clear any pre-existing intervals
+        resetCounters(); //set all counters back to 1
+        console.log("visualizer_interval cleared!");
+    }
     $("#visualizer_space").empty(); //clear visualizer space of old elements
+    $("#visualizer_space").css("background-color", "black"); //return background color to black if different
+    $("#visualizer_space").css("display", "block"); //return background color to black if different
     $(".custom_visualizer_script_file").remove(); //remove any custom visualizer js files from document
     switch(global_sc_id) { //add custom js files if necessary:
         case 98372279: //the deep end - holy ghost
@@ -656,6 +708,10 @@ function initializeVisualization(global_sc_id){
             break;
         case 145327315: //summer is over - anoraak
             loadjscssfile("summerIsOverVisualizer.js", "js");
+            break;
+        default:
+            createVerticalRectangles({num_recs_to_create:8, height:90, z_index:1, space_between:"random", visibility:"visible"});
+            $("#visualizer_space").css("background-color", "white");
             break;
     }
 }

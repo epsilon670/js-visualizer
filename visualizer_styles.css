@@ -1,3 +1,24 @@
+html, body, .container {
+	background-color: black;
+	height:100%;
+}
+
+#page_container{
+	margin:0px;
+	padding:0px;
+	width:100%;
+}
+
+#top_row{
+	margin-left: 0px;
+	margin-right: 0px;
+	width:100%;
+}
+
+#soundcloud_title_display, #soundcloud_creator_display{
+	font-weight: bold;
+}
+
 #counter_debug, #infinite_counter_debug{
 	font-size: 500%;
 	float:left;
@@ -37,12 +58,14 @@
 	margin: auto;
 }
 
-
 #visualizer_space{
 	/*DIMENSIONS FOR VISUALIZER*/
 	width:300px;
     height:300px;
+    margin-top:2%;
+    margin-bottom: 2%;
     position:relative; /*just so that visualizer_space is the containing block for absolutely positioned child elements*/
+    background-color: black;
 }
 
 	.visual_image{
@@ -81,24 +104,27 @@
 
 
 #soundcloud_attribution_container{
-	position:absolute;
-	top:160px;
-	color:black;
+	color:white;
+	text-align:right;
+	float:right;
 }
 	
 	#soundcloud_attribution{
 		visibility: hidden;
 	}
 
-#audio_container audio{
-	width:100%;
-    position: relative;
+	#soundcloud_image{
+		background-color: white;
+	}
+
+#audioControl{
+	margin-left: 2%;
 }
 
 /*Search Box CSS*/
 
 #search_form_div{
-	width:60%;
+	width:100%;
 	text-align: center;
 }
 
@@ -122,12 +148,12 @@
 
 	#search_results_list{
 		padding:0px;
+		background-color: white;
 	}
 
 	.search_result{
 		cursor: pointer; 
 		cursor: hand;
-		background-color: white;
 	}
 
 	.search_result:hover{
@@ -135,4 +161,13 @@
 	}
 
 
+
+#audio_container audio{
+	width:100%;
+    position: relative;
+}
+
+#player{
+	display:none;
+}
 
